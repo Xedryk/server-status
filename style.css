@@ -262,7 +262,7 @@ p#status-text {
   }
 
   .container {
-    padding: clamp(0.5rem, 2vh, 1rem);
+    padding: clamp(0.5rem, 2vh, 1rem) clamp(0.75rem, 3vw, 1rem) clamp(0.5rem, 2vh, 1rem) clamp(0.5rem, 2.5vw, 1rem);
     overflow-x: hidden;
     overflow-y: hidden;
   }
