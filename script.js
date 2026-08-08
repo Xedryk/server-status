@@ -17,6 +17,47 @@ const FALLBACK_IMG = {
     '</svg>')
 };
 
+// Time-based outage messages — jokes escalate as downtime grows
+const OUTAGE_MESSAGES = [
+  { min: 0,     text: "We hit a small server issue — will be back soon!" },
+  { min: 5,     text: "The server is in the hard time, be patient." },
+  { min: 30,    text: "The server needs a new host to triple itself :3" },
+  { min: 120,   text: "Okay this is getting a bit awkward... the server is napping." },
+  { min: 360,   text: "The hamster powering the server wheels is on a long coffee break." },
+  { min: 720,   text: "Our server has gone to explore the void. It left a note saying it'll be back." },
+  { min: 1440,  text: "The server is on vacation. Wait — it didn't even pack." },
+  { min: 4320,  text: "We're starting to worry. The server ghosted us." },
+];
+
+// XOR-encrypted contact email — only decrypted when downtime exceeds 7 days
+const CONTACT_EMAIL_KEY = "Xedryk7d!";
+const CONTACT_EMAIL_CIPHER = [53,28,9,29,23,14,78,11,73,24,2,9,19,16,7,25,7,78,53];
+const DEAD_THRESHOLD_MIN = 10080; // 7 days
+
+function decryptEmail() {
+  let out = "";
+  for (let i = 0; i < CONTACT_EMAIL_CIPHER.length; i++) {
+    out += String.fromCharCode(CONTACT_EMAIL_CIPHER[i] ^ CONTACT_EMAIL_KEY.charCodeAt(i % CONTACT_EMAIL_KEY.length));
+  }
+  return out;
+}
+
+function outageMessageFor(elapsedSeconds) {
+  const minutes = elapsedSeconds / 60;
+
+  // > 7 days: the server is dead — reveal the encrypted contact email
+  if (minutes >= DEAD_THRESHOLD_MIN) {
+    const email = decryptEmail();
+    return `This server is dead. Please contact the manager's friend to update the status. Send an email to ${email} (the manager's young brother).`;
+  }
+
+  let msg = OUTAGE_MESSAGES[0].text;
+  for (const tier of OUTAGE_MESSAGES) {
+    if (minutes >= tier.min) msg = tier.text;
+  }
+  return msg;
+}
+
 // DOM Elements
 const statusImg = document.getElementById('status-image');
 const statusBadge = document.getElementById('status-badge');
@@ -81,7 +122,7 @@ function updateUI(isOnline) {
     statusBadge.textContent = 'OFFLINE';
     statusBadge.className = 'status-badge offline';
     statusTitle.textContent = 'Server is on Maintenance';
-    statusText.textContent = 'We are currently experiencing an outage or performing maintenance.';
+    statusText.textContent = outageMessageFor(0);
     timerLabel.textContent = 'Time Offline:';
     restoreButtons.classList.add('hidden');
   }
@@ -96,6 +137,12 @@ function updateTimer() {
   const s = String(elapsedSeconds % 60).padStart(2, '0');
 
   timerDisplay.textContent = `${h}:${m}:${s}`;
+
+  // Keep the outage joke in sync with elapsed time (and reveal the encrypted
+  // contact email once downtime exceeds 7 days)
+  if (currentState === 'offline') {
+    statusText.textContent = outageMessageFor(elapsedSeconds);
+  }
 }
 
 async function checkServer() {
