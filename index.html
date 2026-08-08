@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xedryk Server Status</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1F4BB;</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="status-badge" id="status-badge">OFFLINE</div>
+    <img id="status-image" src="offline.png" alt="Server status icon" onerror="handleImageError(this)">
+    <h1 id="status-title">Server is on Maintenance</h1>
+    <p id="status-text">We are currently experiencing an outage or performing maintenance.</p>
+    <div class="timer-box">
+      <span id="timer-label">Time Offline:</span>
+      <span id="timer-display">00:00:00</span>
+    </div>
+    <div id="ip-note" class="ip-note">
+      <strong>IP blocked?</strong> If you believe your IP has been banned or blocked, try using a <strong>VPN</strong>,
+      <strong>mobile data</strong>, or a different network before reporting the issue.
+    </div>
+    <a id="return-btn" class="hidden" href="https://xedryk.top" target="_blank" rel="noopener">Visit Homepage Now</a>
+    <p class="footnote">This page is hosted on GitHub Pages as a failover. Checking <span id="ping-url-label">xedryk.top/health-ping</span> every second.</p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
