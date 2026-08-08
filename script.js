@@ -24,7 +24,9 @@ const statusTitle = document.getElementById('status-title');
 const statusText = document.getElementById('status-text');
 const timerLabel = document.getElementById('timer-label');
 const timerDisplay = document.getElementById('timer-display');
+const restoreButtons = document.getElementById('restore-buttons');
 const returnBtn = document.getElementById('return-btn');
+const homeBtn = document.getElementById('home-btn');
 const pingUrlLabel = document.getElementById('ping-url-label');
 
 // Expose for onclick from index.html
@@ -35,6 +37,32 @@ let currentState = localStorage.getItem('server_state') || 'offline';
 let stateStartTime = parseInt(localStorage.getItem('state_start_time')) || Date.now();
 let checkInFlight = false;
 
+// Capture the page the user was trying to visit (set by the Cloudflare Worker
+// redirect as ?from=<encoded url>), so "Restore Access" can take them back.
+(function captureReturnUrl() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get('from');
+    if (from) {
+      const url = new URL(from);
+      if (url.protocol === 'https:' || url.protocol === 'http:') {
+        localStorage.setItem('return_url', url.href);
+      }
+    }
+  } catch (e) { /* ignore malformed params */ }
+})();
+
+function getReturnUrl() {
+  try {
+    const saved = localStorage.getItem('return_url');
+    if (saved) {
+      const url = new URL(saved);
+      if (url.protocol === 'https:' || url.protocol === 'http:') return url.href;
+    }
+  } catch (e) { /* ignore */ }
+  return HOME_URL;
+}
+
 function updateUI(isOnline) {
   if (isOnline) {
     statusImg.src = 'online.webp';
@@ -44,8 +72,9 @@ function updateUI(isOnline) {
     statusTitle.textContent = 'Server is Online';
     statusText.textContent = 'All systems are currently operational.';
     timerLabel.textContent = 'Uptime:';
-    returnBtn.href = HOME_URL;
-    returnBtn.classList.remove('hidden');
+    returnBtn.href = getReturnUrl();
+    homeBtn.href = HOME_URL;
+    restoreButtons.classList.remove('hidden');
   } else {
     statusImg.src = 'offline.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.offline; };
@@ -54,7 +83,7 @@ function updateUI(isOnline) {
     statusTitle.textContent = 'Server is on Maintenance';
     statusText.textContent = 'We are currently experiencing an outage or performing maintenance.';
     timerLabel.textContent = 'Time Offline:';
-    returnBtn.classList.add('hidden');
+    restoreButtons.classList.add('hidden');
   }
 }
 

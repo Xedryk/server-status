@@ -177,6 +177,39 @@ p#status-text {
 
 #return-btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
 
+.restore-buttons {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 0.9rem);
+  margin-top: clamp(0.3rem, 1vh, 0.6rem);
+}
+
+.restore-buttons a {
+  display: inline-block;
+  padding: clamp(0.6rem, 1.4vh, 0.85rem) clamp(1.4rem, 3.5vw, 1.9rem);
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.2vh, 1.1rem);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, transform 0.1s, border-color 0.2s;
+}
+
+#return-btn {
+  background-color: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+}
+
+#return-btn:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); transform: translateY(-1px); }
+
+#home-btn {
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+}
+
+#home-btn:hover { background: var(--btn-hover-bg); color: var(--btn-hover-text); border-color: var(--btn-hover-border); transform: translateY(-1px); }
+
 .action-buttons {
   display: flex;
   justify-content: center;
