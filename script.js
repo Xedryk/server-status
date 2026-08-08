@@ -37,7 +37,7 @@ let checkInFlight = false;
 
 function updateUI(isOnline) {
   if (isOnline) {
-    statusImg.src = 'online.png';
+    statusImg.src = 'online.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.online; };
     statusBadge.textContent = 'ONLINE';
     statusBadge.className = 'status-badge online';
@@ -47,7 +47,7 @@ function updateUI(isOnline) {
     returnBtn.href = HOME_URL;
     returnBtn.classList.remove('hidden');
   } else {
-    statusImg.src = 'offline.png';
+    statusImg.src = 'offline.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.offline; };
     statusBadge.textContent = 'OFFLINE';
     statusBadge.className = 'status-badge offline';
