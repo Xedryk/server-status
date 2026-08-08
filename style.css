@@ -179,6 +179,7 @@ p#status-text {
 
 .restore-buttons {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: clamp(0.5rem, 2vw, 0.9rem);
   margin-top: clamp(0.3rem, 1vh, 0.6rem);
@@ -212,6 +213,7 @@ p#status-text {
 
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: clamp(0.5rem, 2vw, 1rem);
   margin-top: clamp(0.5rem, 1.5vh, 0.9rem);
@@ -251,9 +253,48 @@ p#status-text {
   font-size: clamp(0.68rem, 1.5vh, 0.8rem);
   color: var(--dim);
   word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-@media (max-width: 560px) {
-  .container { padding: 1rem 1rem; }
-  .status-badge { position: static; display: inline-block; margin-bottom: 0.5rem; }
+@media (max-width: 600px) {
+  .container {
+    padding: 1.1rem 1rem;
+    overflow-x: hidden;
+  }
+
+  .status-badge {
+    position: static;
+    display: block;
+    width: fit-content;
+    margin: 0 auto 0.75rem;
+  }
+
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  h1 {
+    word-break: break-word;
+  }
+
+  .restore-buttons,
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .restore-buttons a,
+  .action-btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+
+  .timer-box {
+    width: fit-content;
+    max-width: 100%;
+  }
 }
