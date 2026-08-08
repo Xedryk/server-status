@@ -1,166 +1,226 @@
+:root {
+  color-scheme: light dark;
+  --bg1: #f4f4f9;
+  --bg2: #e6ecf4;
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --card-border: #e5e9f0;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.14);
+  --text: #1f2733;
+  --title: #0f172a;
+  --muted: #475569;
+  --dim: #94a3b8;
+  --timer-bg: #f1f5f9;
+  --timer-border: #e2e8f0;
+  --note-bg: #fef9c3;
+  --note-border: #fde047;
+  --note-text: #713f12;
+  --btn-bg: #eef2f7;
+  --btn-border: #d7dee8;
+  --btn-text: #334155;
+  --btn-hover-bg: #dbeafe;
+  --btn-hover-text: #1d4ed8;
+  --btn-hover-border: #93c5fd;
+  --primary: #0078d4;
+  --primary-hover: #005a9e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg1: #0b1120;
+    --bg2: #141c30;
+    --card-bg: rgba(17, 24, 39, 0.96);
+    --card-border: #1f2a44;
+    --shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --text: #e2e8f0;
+    --title: #f8fafc;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --timer-bg: #1e293b;
+    --timer-border: #334155;
+    --note-bg: #3f2f00;
+    --note-border: #a16207;
+    --note-text: #fde68a;
+    --btn-bg: #1e293b;
+    --btn-border: #334155;
+    --btn-text: #cbd5e1;
+    --btn-hover-bg: #1e3a8a;
+    --btn-hover-text: #dbeafe;
+    --btn-hover-border: #3b82f6;
+    --primary: #0ea5e9;
+    --primary-hover: #38bdf8;
+  }
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    padding: 1rem;
-    background: linear-gradient(160deg, #f4f4f9 0%, #e6ecf4 100%);
-    color: #1f2733;
-    text-align: center;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(0.5rem, 2vh, 1.25rem);
+  background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 100%);
+  color: var(--text);
+  text-align: center;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.92);
-    padding: 3rem 5rem;
-    border-radius: 24px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-    max-width: 720px;
-    width: 100%;
-    position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: clamp(1.1rem, 3vh, 2.2rem) clamp(1.25rem, 4vw, 4.5rem);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  max-width: 720px;
+  width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  position: relative;
 }
 
 .status-badge {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    background: #6b7280;
-    color: #fff;
+  position: absolute;
+  top: clamp(0.8rem, 2vh, 1.25rem);
+  right: clamp(0.8rem, 2vw, 1.5rem);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  background: #6b7280;
+  color: #fff;
 }
 
 .status-badge.online { background: #16a34a; }
 .status-badge.offline { background: #dc2626; }
 
 img {
-    width: 220px;
-    height: 220px;
-    margin-bottom: 1.25rem;
-    object-fit: contain;
+  width: clamp(120px, 20vh, 200px);
+  height: clamp(120px, 20vh, 200px);
+  margin: clamp(0.5rem, 1.5vh, 1rem) 0;
+  object-fit: contain;
 }
 
 h1 {
-    font-size: 2.1rem;
-    font-weight: 800;
-    margin-bottom: 0.6rem;
-    color: #0f172a;
+  font-size: clamp(1.35rem, 3.6vh, 2.1rem);
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  color: var(--title);
 }
 
 p#status-text {
-    font-size: 1.15rem;
-    color: #475569;
-    line-height: 1.55;
+  font-size: clamp(0.95rem, 2vh, 1.15rem);
+  color: var(--muted);
+  line-height: 1.4;
 }
 
 .timer-box {
-    margin: 1.75rem auto 1.25rem;
-    font-size: 1.6rem;
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    padding: 0.8rem 1.25rem;
-    border-radius: 12px;
-    display: inline-block;
+  margin: clamp(0.6rem, 1.8vh, 1.1rem) auto;
+  font-size: clamp(1.15rem, 2.6vh, 1.6rem);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  background: var(--timer-bg);
+  border: 1px solid var(--timer-border);
+  padding: clamp(0.4rem, 1vh, 0.7rem) clamp(1rem, 2.5vw, 1.25rem);
+  border-radius: 12px;
+  display: inline-block;
 }
 
 #timer-label {
-    font-weight: 600;
-    color: #334155;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 #timer-display {
-    font-variant-numeric: tabular-nums;
-    color: #0f172a;
-    margin-left: 0.5rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--title);
+  margin-left: 0.5rem;
 }
 
 .ip-note {
-    background: #fef9c3;
-    border: 1px solid #fde047;
-    color: #713f12;
-    padding: 0.9rem 1.25rem;
-    border-radius: 10px;
-    font-size: 0.98rem;
-    line-height: 1.5;
-    margin: 0 0 1.5rem;
+  background: var(--note-bg);
+  border: 1px solid var(--note-border);
+  color: var(--note-text);
+  padding: clamp(0.5rem, 1.2vh, 0.8rem) clamp(0.9rem, 2vw, 1.25rem);
+  border-radius: 10px;
+  font-size: clamp(0.82rem, 1.8vh, 0.98rem);
+  line-height: 1.4;
+  margin: clamp(0.5rem, 1.5vh, 0.9rem) 0 clamp(0.4rem, 1vh, 0.7rem);
 }
 
 .hidden {
-    display: none !important;
+  display: none !important;
 }
 
 #return-btn {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 14px 34px;
-    background-color: #0078d4;
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    transition: background 0.2s, transform 0.1s;
+  display: inline-block;
+  margin-top: clamp(0.3rem, 1vh, 0.6rem);
+  padding: clamp(0.6rem, 1.4vh, 0.85rem) clamp(1.5rem, 4vw, 2.1rem);
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.2vh, 1.1rem);
+  transition: background 0.2s, transform 0.1s;
 }
 
-#return-btn:hover { background-color: #005a9e; transform: translateY(-1px); }
+#return-btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
 
 .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-top: clamp(0.5rem, 1.5vh, 0.9rem);
 }
 
 .action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.4rem;
-    background: #eef2f7;
-    border: 1px solid #d7dee8;
-    border-radius: 999px;
-    color: #334155;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.98rem;
-    transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: clamp(0.45rem, 1.1vh, 0.65rem) clamp(0.9rem, 2.5vw, 1.3rem);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 999px;
+  color: var(--btn-text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.9vh, 0.98rem);
+  transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
 }
 
 .action-btn svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
 }
 
 .action-btn:hover {
-    background: #dbeafe;
-    color: #1d4ed8;
-    border-color: #93c5fd;
-    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
-    transform: translateY(-1px);
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-text);
+  border-color: var(--btn-hover-border);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
+  transform: translateY(-1px);
 }
 
 .footnote {
-    margin-top: 1.75rem;
-    font-size: 0.8rem;
-    color: #94a3b8;
+  margin-top: clamp(0.5rem, 1.5vh, 0.9rem);
+  font-size: clamp(0.68rem, 1.5vh, 0.8rem);
+  color: var(--dim);
+  word-break: break-word;
 }
 
 @media (max-width: 560px) {
-    .container { padding: 2rem 1.25rem; }
-    img { width: 160px; height: 160px; }
-    h1 { font-size: 1.5rem; }
-    .timer-box { font-size: 1.2rem; }
-    .status-badge { position: static; display: inline-block; margin-bottom: 1rem; }
+  .container { padding: 1rem 1rem; }
+  .status-badge { position: static; display: inline-block; margin-bottom: 0.5rem; }
 }
