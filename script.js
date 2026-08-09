@@ -126,6 +126,7 @@ function getReturnUrl() {
 }
 
 function updateUI(state) {
+  statusImg.classList.remove('status-avatar');
   if (state === 'online') {
     statusImg.src = 'online.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.online; };
@@ -147,8 +148,9 @@ function updateUI(state) {
     timerLabel.textContent = 'Maintenance Time:';
     restoreButtons.classList.add('hidden');
   } else if (state === 'notfound') {
-    statusImg.src = FALLBACK_IMG.notfound;
-    statusImg.onerror = null;
+    statusImg.src = 'notfound.webp';
+    statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.notfound; };
+    statusImg.classList.add('status-avatar');
     statusBadge.textContent = 'NOT FOUND';
     statusBadge.className = 'status-badge notfound';
     statusTitle.textContent = 'Page Not Found';
