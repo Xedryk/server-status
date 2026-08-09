@@ -94,6 +94,11 @@ let checkInFlight = false;
 let serverUptimeSeconds = null;
 let serverUptimeAt = 0;
 
+// Server-reported outage start (epoch ms), supplied by the Worker via KV.
+// When present the OFFLINE/MAINTENANCE timer counts from it — the same value
+// on every device — instead of the per-browser localStorage counter below.
+let serverDownSince = null;
+
 // Capture the page the user was trying to visit (set by the Cloudflare Worker
 // redirect as ?from=<encoded url>), so "Restore Access" can take them back.
 (function captureReturnUrl() {
@@ -188,8 +193,13 @@ function updateTimer() {
     // Real Linux uptime from the server, ticking locally between polls and
     // re-synced every second — same value on every device.
     elapsedSeconds = serverUptimeSeconds + (now - serverUptimeAt) / 1000;
+  } else if (serverDownSince !== null) {
+    // Offline/maintenance: count from the server-reported outage start, so
+    // every device shows the same downtime.
+    elapsedSeconds = (now - serverDownSince) / 1000;
   } else {
-    // Maintenance or offline: count from when this state started (per-browser).
+    // Fallback when no down_since is available: count from when this state
+    // started locally (per-browser).
     elapsedSeconds = (now - stateStartTime) / 1000;
   }
 
@@ -212,27 +222,29 @@ async function checkServer() {
     const res = await fetch(`${PING_URL}?t=${Date.now()}`, { signal: controller.signal, cache: 'no-store' });
     clearTimeout(timer);
 
-    // The worker now returns JSON: { status: "UP"|"MAINTENANCE"|"DOWN", uptime_seconds: number|null }
+    // The worker now returns JSON: { status: "UP"|"MAINTENANCE"|"DOWN", uptime_seconds: number|null, down_since: number|null }
     let status = res.ok ? 'UP' : 'DOWN';
     let uptimeSeconds = null;
+    let downSince = null;
     try {
       const body = await res.json();
       if (body && typeof body.status === 'string') status = body.status;
       if (body && typeof body.uptime_seconds === 'number') uptimeSeconds = body.uptime_seconds;
+      if (body && typeof body.down_since === 'number') downSince = body.down_since;
     } catch (e) {
       // Older worker still returns plain "UP"/"DOWN" text — fall back to status code.
     }
 
-    handleStateChange(status, uptimeSeconds);
+    handleStateChange(status, uptimeSeconds, downSince);
   } catch (error) {
     // Network error / CORS failure / timeout = offline
-    handleStateChange('DOWN', null);
+    handleStateChange('DOWN', null, null);
   } finally {
     checkInFlight = false;
   }
 }
 
-function handleStateChange(status, uptimeSeconds) {
+function handleStateChange(status, uptimeSeconds, downSince) {
   const newStateStr = status === 'UP' ? 'online' : (status === 'MAINTENANCE' ? 'maintenance' : 'offline');
 
   if (currentState !== newStateStr) {
@@ -263,6 +275,17 @@ function handleStateChange(status, uptimeSeconds) {
         serverUptimeSeconds = uptimeSeconds;
         serverUptimeAt = now;
       }
+    }
+  }
+
+  // Keep the server-reported outage start (earliest value wins) for the
+  // OFFLINE/MAINTENANCE timer, and clear it the moment the server is back
+  // online. A device that joins mid-outage gets the same value as everyone else.
+  if (newStateStr === 'online') {
+    serverDownSince = null;
+  } else if (typeof downSince === 'number' && downSince > 0) {
+    if (serverDownSince === null || downSince < serverDownSince) {
+      serverDownSince = downSince;
     }
   }
 
