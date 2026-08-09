@@ -163,90 +163,97 @@ p#status-text {
   display: none !important;
 }
 
-#return-btn {
-  display: inline-block;
-  margin-top: clamp(0.3rem, 1vh, 0.6rem);
-  padding: clamp(0.6rem, 1.4vh, 0.85rem) clamp(1.5rem, 4vw, 2.1rem);
-  background-color: var(--primary);
-  color: white;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: clamp(0.95rem, 2.2vh, 1.1rem);
-  transition: background 0.2s, transform 0.1s;
-}
-
-#return-btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
-
-.restore-buttons {
-  display: flex;
-  flex-wrap: wrap;
+/* ---- Buttons: one shared shape, layered color variants ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: clamp(0.5rem, 2vw, 0.9rem);
-  margin-top: clamp(0.3rem, 1vh, 0.6rem);
-}
-
-.restore-buttons a {
-  display: inline-block;
-  padding: clamp(0.6rem, 1.4vh, 0.85rem) clamp(1.4rem, 3.5vw, 1.9rem);
-  border-radius: 10px;
+  gap: 0.5rem;
+  min-height: clamp(2.7rem, 6vh, 3.1rem);
+  padding: clamp(0.45rem, 1vh, 0.6rem) clamp(1.3rem, 3vw, 2rem);
+  border-radius: 12px;
   font-weight: 700;
-  font-size: clamp(0.95rem, 2.2vh, 1.1rem);
+  font-size: clamp(0.9rem, 2.1vh, 1.05rem);
+  letter-spacing: 0.01em;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s, transform 0.1s, border-color 0.2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    background-image 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
-#return-btn {
-  background-color: var(--primary);
-  color: white;
-  border: 1px solid var(--primary);
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
-#return-btn:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); transform: translateY(-1px); }
+.btn svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+}
 
-#home-btn {
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-border);
+/* Primary action — gradient fill + glow */
+.btn-primary {
+  background-image: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+.btn-primary:hover {
+  background-image: linear-gradient(135deg, #4f8cff, #2f6df0);
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.5);
+  color: #fff;
+}
+.btn-primary:active {
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+/* Secondary — solid surface, subtle border */
+.btn-secondary {
+  background-color: var(--btn-bg);
   color: var(--btn-text);
+  border-color: var(--btn-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.btn-secondary:hover {
+  background-color: var(--btn-hover-bg);
+  color: var(--btn-hover-text);
+  border-color: var(--btn-hover-border);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.2);
 }
 
-#home-btn:hover { background: var(--btn-hover-bg); color: var(--btn-hover-text); border-color: var(--btn-hover-border); transform: translateY(-1px); }
+/* Soft/tinted — icon actions */
+.btn-soft {
+  background-color: color-mix(in srgb, var(--primary) 12%, var(--btn-bg));
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--btn-border));
+}
+.btn-soft:hover {
+  background-color: color-mix(in srgb, var(--primary) 22%, var(--btn-bg));
+  color: var(--primary-hover);
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--btn-border));
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 25%, transparent);
+}
 
+.restore-buttons,
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(0.5rem, 2vw, 1rem);
-  margin-top: clamp(0.5rem, 1.5vh, 0.9rem);
-}
-
-.action-btn {
-  display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: clamp(0.45rem, 1.1vh, 0.65rem) clamp(0.9rem, 2.5vw, 1.3rem);
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-border);
-  border-radius: 999px;
-  color: var(--btn-text);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: clamp(0.82rem, 1.9vh, 0.98rem);
-  transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
-}
-
-.action-btn svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  flex-shrink: 0;
-}
-
-.action-btn:hover {
-  background: var(--btn-hover-bg);
-  color: var(--btn-hover-text);
-  border-color: var(--btn-hover-border);
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
-  transform: translateY(-1px);
+  gap: clamp(0.5rem, 1.5vw, 0.9rem);
+  margin-top: clamp(0.4rem, 1.2vh, 0.7rem);
 }
 
 .footnote {
@@ -320,29 +327,30 @@ p#status-text {
     margin-top: clamp(0.2rem, 0.9vh, 0.45rem);
   }
 
-  .restore-buttons a {
+  .restore-buttons .btn {
     width: 100%;
     max-width: 300px;
-    justify-content: center;
-    padding: clamp(0.45rem, 1.6vh, 0.7rem) clamp(0.6rem, 4vw, 1.2rem);
-    font-size: clamp(0.85rem, 2.2vh, 1rem);
+    min-height: clamp(2.6rem, 6vh, 2.9rem);
+    font-size: clamp(0.88rem, 2.2vh, 1rem);
   }
 
   .action-buttons {
-    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     width: 100%;
     margin-top: clamp(0.25rem, 1vh, 0.5rem);
   }
 
-  .action-btn {
-    justify-content: center;
-    padding: clamp(0.35rem, 1.3vh, 0.55rem) clamp(0.8rem, 3vw, 1rem);
-    font-size: clamp(0.72rem, 2vh, 0.85rem);
+  .action-buttons .btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+    max-width: 160px;
+    padding: clamp(0.35rem, 1.3vh, 0.5rem) clamp(0.8rem, 3vw, 1.1rem);
+    font-size: clamp(0.78rem, 2vh, 0.9rem);
   }
 
-  .action-btn svg {
+  .action-buttons .btn svg {
     width: 1rem;
     height: 1rem;
   }
