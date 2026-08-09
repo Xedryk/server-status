@@ -105,6 +105,7 @@ body {
 .status-badge.online { background: #16a34a; }
 .status-badge.maintenance { background: #d97706; }
 .status-badge.offline { background: #dc2626; }
+.status-badge.notfound { background: #6b7280; }
 
 img {
   width: clamp(120px, 20vh, 200px);

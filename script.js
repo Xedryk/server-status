@@ -19,6 +19,11 @@ const FALLBACK_IMG = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
     '<circle cx="50" cy="50" r="46" fill="#dc2626"/>' +
     '<path d="M34 34 L66 66 M66 34 L34 66" stroke="#fff" stroke-width="10" stroke-linecap="round"/>' +
+    '</svg>'),
+  notfound: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+    '<circle cx="50" cy="50" r="46" fill="#6b7280"/>' +
+    '<text x="50" y="68" font-size="54" font-weight="bold" text-anchor="middle" fill="#fff" font-family="system-ui">?</text>' +
     '</svg>')
 };
 
@@ -104,6 +109,11 @@ let serverUptimeAt = 0;
   } catch (e) { /* ignore malformed params */ }
 })();
 
+// The Worker sets ?nf=1 when the page the visitor asked for doesn't exist
+// (unknown subdomain or 404 path). In that mode we show a static "not found"
+// view with a Homepage button instead of the server status / restore UI.
+const isNotFoundPage = new URLSearchParams(window.location.search).get('nf') === '1';
+
 function getReturnUrl() {
   try {
     const saved = localStorage.getItem('return_url');
@@ -136,6 +146,19 @@ function updateUI(state) {
     statusText.textContent = 'The website is being worked on. The server itself is running fine.';
     timerLabel.textContent = 'Maintenance Time:';
     restoreButtons.classList.add('hidden');
+  } else if (state === 'notfound') {
+    statusImg.src = FALLBACK_IMG.notfound;
+    statusImg.onerror = null;
+    statusBadge.textContent = 'NOT FOUND';
+    statusBadge.className = 'status-badge notfound';
+    statusTitle.textContent = 'Page Not Found';
+    statusText.textContent = "The page you're trying to reach does not exist or hasn't been set up yet.";
+    timerLabel.textContent = '';
+    timerDisplay.textContent = '--:--:--';
+    returnBtn.classList.add('hidden');
+    homeBtn.href = HOME_URL;
+    restoreButtons.classList.remove('hidden');
+    pingUrlLabel.textContent = '';
   } else {
     statusImg.src = 'offline.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.offline; };
@@ -216,12 +239,29 @@ function handleStateChange(status, uptimeSeconds) {
     stateStartTime = Date.now();
     localStorage.setItem('server_state', currentState);
     localStorage.setItem('state_start_time', stateStartTime);
-  }
-
-  // Fresh server uptime whenever the worker reports it (every poll while online).
-  if (typeof uptimeSeconds === 'number' && uptimeSeconds >= 0) {
-    serverUptimeSeconds = uptimeSeconds;
-    serverUptimeAt = Date.now();
+    // State changed (incl. reboots / browser refresh): re-anchor to the fresh
+    // server uptime unconditionally.
+    if (typeof uptimeSeconds === 'number' && uptimeSeconds >= 0) {
+      serverUptimeSeconds = uptimeSeconds;
+      serverUptimeAt = Date.now();
+    }
+  } else if (typeof uptimeSeconds === 'number' && uptimeSeconds >= 0) {
+    // Same state, new sample. The server integer is coarse and every poll
+    // round-trip adds latency, which used to make the timer leap 2-3 seconds
+    // at a time. Accept the server value ONLY when it's ahead of our local
+    // estimate; otherwise keep ticking from our own clock so the timer
+    // advances 1 second every second.
+    const now = Date.now();
+    if (serverUptimeSeconds === null) {
+      serverUptimeSeconds = uptimeSeconds;
+      serverUptimeAt = now;
+    } else {
+      const localEstimate = serverUptimeSeconds + (now - serverUptimeAt) / 1000;
+      if (uptimeSeconds > localEstimate) {
+        serverUptimeSeconds = uptimeSeconds;
+        serverUptimeAt = now;
+      }
+    }
   }
 
   updateUI(currentState);
@@ -234,8 +274,16 @@ function handleImageError(img) {
 }
 
 // Initialization
+if (isNotFoundPage) currentState = 'notfound';
 pingUrlLabel.textContent = PING_URL;
 updateUI(currentState);
-setInterval(updateTimer, 1000);
-setInterval(checkServer, CHECK_INTERVAL);
-checkServer(); // run the first check immediately
+
+if (isNotFoundPage) {
+  // Page-not-found view: static, no server polling or timer needed.
+} else {
+  // 250ms tick (not 1000ms) so Math.floor crosses each second boundary on time
+  // and the timer never skips or repeats a number.
+  setInterval(updateTimer, 250);
+  setInterval(checkServer, CHECK_INTERVAL);
+  checkServer(); // run the first check immediately
+}
