@@ -155,7 +155,6 @@ function updateUI(state) {
   } else if (state === 'notfound') {
     statusImg.src = 'notfound.webp';
     statusImg.onerror = () => { statusImg.src = FALLBACK_IMG.notfound; };
-    statusImg.classList.add('status-avatar');
     statusBadge.textContent = 'NOT FOUND';
     statusBadge.className = 'status-badge notfound';
     statusTitle.textContent = 'Page Not Found';
